@@ -1,0 +1,95 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h1 {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+#options {
+  margin: 0.8rem 0;
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+}
+
+#options label,
+button {
+  border: 0.0625rem solid rgba(0, 0, 0, 0.3);
+  border-radius: 0.3rem;
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  transition: 0.1s all;
+}
+
+#options label:hover,
+button:hover {
+  box-shadow: 0.0625rem 0.125rem 0.1875rem rgba(0, 0, 0, 0.1);
+  border: 0.0625rem solid rgba(0, 0, 0, 0.5);
+}
+
+button {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+#options div input:checked + label {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+#options div {
+  display: flex;
+  padding: 0.5rem;
+  align-items: center;
+}
+
+main {
+  padding: 0 2rem 2rem;
+}
+
+.mode-output {
+  max-width: 48rem;
+  display: flex;
+  margin: 0 auto;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#iduff {
+  resize: none;
+  outline: none;
+  padding: 0.5rem 1rem;
+}
+
+#resultado {
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.hide {
+  display: none;
+}
+
+#disciplinas input {
+  outline: none;
+  border: none;
+  width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+#disciplinas input, table th {
+  padding: 0.5rem 1rem;
+}
+
+table th,
+table td {
+  border: 0.0625rem solid black;/
+}
