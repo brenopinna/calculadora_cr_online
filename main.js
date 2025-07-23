@@ -1,5 +1,4 @@
-carregarInformacoesParaTabela()
-calcularCR(tabelaParaArray())
+const info = calcularCR(localStorageParaArray())
 
 const iduff = document.getElementById("iduff-section")
 const manual = document.getElementById("manual-section")
@@ -11,6 +10,8 @@ document.querySelectorAll("[name=mode]").forEach((modeInput) => {
       iduff.classList.remove("hide")
       manual.classList.add("hide")
     } else {
+      carregarInformacoesParaTabela()
+      calcularCR(tabelaParaArray())
       iduff.classList.add("hide")
       manual.classList.remove("hide")
     }
@@ -47,7 +48,7 @@ function textoIduffParaArray() {
 
   let info = []
   for (let i = 0; i < cargasHorarias.length; i++) {
-    info[i] = [cargasHorarias[i], notas[i], nomes[i]]
+    info[i] = [nomes[i], cargasHorarias[i], notas[i]]
   }
 
   localStorage.setItem("info", JSON.stringify(info))
@@ -55,13 +56,18 @@ function textoIduffParaArray() {
   return info
 }
 
-function calcularCR(horasENotas) {
+function localStorageParaArray() {
+  const info = JSON.parse(localStorage.getItem("info")) ?? []
+  return info.length ? info : null
+}
+
+function calcularCR(info) {
   let totalHoras = 0
   let somaPonderada = 0
 
-  for (let i = 0; i < horasENotas.length; i++) {
-    let ch = horasENotas[i][0],
-      nota = horasENotas[i][1]
+  for (let i = 0; info && i < info.length; i++) {
+    let ch = info[i][1],
+      nota = info[i][2]
     totalHoras += ch
     somaPonderada += nota * ch
   }
@@ -72,32 +78,39 @@ function calcularCR(horasENotas) {
     return
   }
 
+  if (!info) cr = 0
+
   document.getElementById("resultado").innerText = `Seu CR é: ${cr.toFixed(2)}.`
 }
 
 function tabelaParaArray() {
   const inputs = Array.from(document.querySelectorAll(".input-info"))
-  const horasENotas = [[]]
+  const info = []
   inputs.forEach((input, i) => {
-    if (i % 3 == 1) {
-      horasENotas[parseInt(i / 3)] = [parseInt(input.value)]
+    if (i % 3 == 0) {
+      info[parseInt(i / 3)] = [input.value]
+    } else if (i % 3 == 1) {
+      info[parseInt(i / 3)].push(parseInt(input.value) || 0)
     } else if (i % 3 == 2) {
-      horasENotas[parseInt(i / 3)].push(parseFloat(input.value))
+      info[parseInt(i / 3)].push(parseFloat(input.value) || 0)
     }
   })
-  return horasENotas
+  return info.length ? info : null
 }
 
 function carregarInformacoesParaTabela() {
-  const infos = JSON.parse(localStorage.getItem("info"))
-  if (!infos) return
+  const infos = localStorageParaArray()
   const disciplinas = document.getElementById("disciplinas")
+  disciplinas.innerHTML = ""
+  if (!infos) {
+    return
+  }
   infos.forEach((info) => {
     disciplinas.appendChild(criarLinha(...info))
   })
 }
 
-function criarLinha(cargaHoraria, nota, nome) {
+function criarLinha(nome, cargaHoraria, nota) {
   const params = [nome, cargaHoraria, nota]
   const tr = document.createElement("tr")
   const tds = Array.from({ length: 3 }).map((_, i) => {
@@ -107,12 +120,33 @@ function criarLinha(cargaHoraria, nota, nome) {
     if (params[i]) input.value = params[i]
     td.appendChild(input)
     td.children[0].addEventListener("change", () => {
-      calcularCR(tabelaParaArray())
+      const info = tabelaParaArray()
+      calcularCR(info)
+      localStorage.setItem("info", JSON.stringify(info))
     })
     return td
   })
 
-  tr.append(...tds)
+  const deleteCell = document.createElement("td")
+  deleteCell.classList.add("delete-cell")
+  const deleteElement = document.createElement("div")
+  deleteElement.innerText = "X"
+  deleteElement.classList.add("delete")
+  deleteCell.appendChild(deleteElement)
+
+  deleteElement.addEventListener("click", (e) => {
+    const row = e.target.parentNode.parentNode
+    const nameCell = row.children[0]
+    const nameInput = nameCell.children[0]
+    const name = nameInput.value
+    const info = localStorageParaArray()
+    const newInfo = info.filter((v) => v[0] != name)
+    localStorage.setItem("info", JSON.stringify(newInfo))
+    carregarInformacoesParaTabela()
+    calcularCR(tabelaParaArray())
+  })
+
+  tr.append(...tds, deleteCell)
 
   return tr
 }

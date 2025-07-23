@@ -54,6 +54,34 @@ th:nth-of-type(2), th:nth-of-type(3){
   width: 1rem;
 }
 
+tr {
+  position: relative;
+}
+
+tr:hover *:not(.delete, .delete-cell) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.delete-cell {
+  width: 0;
+  padding: 0 .5rem;
+  border: none;
+}
+
+.delete {
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 10px;
+  border-radius: .2rem;
+  border: 1px solid black;
+  background-color: red;
+  color: white;
+}
+
+.delete:hover{
+  background-color: rgb(220,0,0);
+}
+
 .mode-output {
   max-width: 48rem;
   display: flex;
