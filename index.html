@@ -8,26 +8,26 @@
     <h1>Calculadora de CR</h1>
     <div id="options">
       <div>
-        <input hidden aria-hidden="true" type="radio" name="mode" id="iduff-select" />
+        <input
+          checked
+          hidden
+          aria-hidden="true"
+          type="radio"
+          name="mode"
+          id="iduff-select" />
         <label for="iduff-select">Colar notas do Iduff</label>
       </div>
       <div>
-        <input
-          hidden
-          aria-hidden="true"
-          checked
-          type="radio"
-          name="mode"
-          id="manual-select" />
+        <input hidden aria-hidden="true" type="radio" name="mode" id="manual-select" />
         <label for="manual-select">Inserir notas manualmente</label>
       </div>
     </div>
     <main>
-      <section id="iduff-section" class="mode-output iduff hide">
+      <section id="iduff-section" class="mode-output iduff">
         <textarea id="iduff" rows="10" cols="50"></textarea>
         <button onclick="calcularCR(textoIduffParaArray())">Calcular CR</button>
       </section>
-      <section id="manual-section" class="mode-output manual">
+      <section id="manual-section" class="mode-output manual hide">
         <button id="adicionar-disciplina" onclick="adicionarLinha()">
           Adicione uma nova disciplina
         </button>
