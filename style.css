@@ -50,6 +50,10 @@ main {
   padding: 0 2rem 2rem;
 }
 
+th:nth-of-type(2), th:nth-of-type(3){
+  width: 1rem;
+}
+
 .mode-output {
   max-width: 48rem;
   display: flex;
