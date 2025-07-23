@@ -1,12 +1,56 @@
 <html>
   <head>
+    <script defer src="main.js"></script>
     <meta charset="utf-8" />
+    <style>
+      .hide {
+        display: none;
+      }
+
+      #disciplinas > tr > td {
+        width: fit-content;
+        /* border: 1px solid black; */
+      }
+      table {
+        border-collapse: collapse;
+      }
+      table th,
+      table td {
+        border: 0.0625rem solid black;
+        padding: 0.5rem;
+      }
+    </style>
   </head>
   <body>
-    <textarea id="iduff" rows="10" cols="50"></textarea>
+    <input type="radio" name="mode" id="iduff-select" />
+    <label for="iduff-select">Colar notas do Iduff</label>
     <br />
-    <button onclick="calcularCR()">Calcular CR</button>
-    <p id="resultado"></p>
-    <script src="main.js"></script>
+    <input checked type="radio" name="mode" id="manual-select" />
+    <label for="manual-select">Inserir notas manualmente</label>
+    <br />
+    <section id="iduff-section" class="mode-output iduff hide">
+      <textarea id="iduff" rows="10" cols="50"></textarea>
+      <br />
+      <button onclick="calcularCR(textoIduffParaNumeros())">Calcular CR</button>
+    </section>
+    <section id="manual-section" class="mode-output manual">
+      <button id="adicionar-disciplina" onclick="adicionarLinha()">
+        Adicione uma nova disciplina
+      </button>
+      <br />
+      <br />
+      <table>
+        <thead>
+          <tr>
+            <th>Nome da Disciplina</th>
+            <th>Carga Horária</th>
+            <th>Nota</th>
+          </tr>
+        </thead>
+        <tbody id="disciplinas"></tbody>
+      </table>
+      <br />
+    </section>
+    <p id="resultado">Seu CR é: 0.00.</p>
   </body>
 </html>
