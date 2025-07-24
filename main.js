@@ -74,7 +74,7 @@ function calcularCR(info) {
 
   let cr = somaPonderada / totalHoras
 
-  if (isNaN(totalHoras) || isNaN(somaPonderada)) {
+  if (isNaN(totalHoras) || isNaN(somaPonderada) || isNaN(cr)) {
     return
   }
 
