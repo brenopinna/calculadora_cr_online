@@ -96,7 +96,7 @@ tr:hover *:not(.delete, .delete-cell) {
   padding: 0.5rem 1rem;
 }
 
-#resultado {
+#result {
   font-size: 1.5rem;
   margin-top: 1rem;
   text-align: center;
@@ -107,7 +107,7 @@ tr:hover *:not(.delete, .delete-cell) {
   display: none;
 }
 
-#disciplinas input {
+#subjects input {
   outline: none;
   border: none;
   width: 100%;
@@ -117,7 +117,7 @@ table {
   border-collapse: collapse;
 }
 
-#disciplinas input, table th {
+#subjects input, table th {
   padding: 0.5rem 1rem;
 }
 

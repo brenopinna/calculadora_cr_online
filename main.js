@@ -1,7 +1,10 @@
-const info = calcularCR(localStorageParaArray())
-
 const iduff = document.getElementById("iduff-section")
+const iduffTextarea = document.getElementById("iduff")
 const manual = document.getElementById("manual-section")
+const result = document.getElementById("result")
+const subjects = document.getElementById("subjects")
+
+const info = calculateCR(localStorageToArray())
 
 document.querySelectorAll("[name=mode]").forEach((modeInput) => {
   modeInput.addEventListener("change", (e) => {
@@ -12,7 +15,7 @@ document.querySelectorAll("[name=mode]").forEach((modeInput) => {
       manual.classList.add("hide")
       manual.ariaHidden = true
     } else {
-      carregarInformacoesParaTabela()
+      localStorageToTable()
       iduff.classList.add("hide")
       iduff.ariaHidden = true
       manual.classList.remove("hide")
@@ -21,37 +24,37 @@ document.querySelectorAll("[name=mode]").forEach((modeInput) => {
   })
 })
 
-function textoIduffParaArray() {
-  const input = document.getElementById("iduff").value
-  const linhas = input.split("\n")
+function iduffTextToArray() {
+  const input = iduffTextarea.value
+  const lines = input.split("\n")
 
-  let cargasHorarias = []
-  let notas = []
-  let nomes = []
+  let classHours = []
+  let grades = []
+  let names = []
 
   let line = 0
 
-  for (let i = 0; i < linhas.length; i++) {
+  for (let i = 0; i < lines.length; i++) {
     line++
     if (line % 3 == 1) {
-      const [_, ...nome] = linhas[i].split(/[\s:]+/) // divide por espaços e ':'
-      nomes.push(nome.join(" "))
+      const [_, ...name] = lines[i].split(/[\s:]+/) // divide por espaços e ':'
+      names.push(name.join(" "))
     }
     if (line % 3 === 0) {
-      const partes = linhas[i].split(/[\s:]+/) // divide por espaços e ':'
-      const nota = parseFloat(partes[1])
-      const ch = parseInt(partes[3])
+      const fragments = lines[i].split(/[\s:]+/) // divide por espaços e ':'
+      const grade = parseFloat(fragments[1])
+      const hours = parseInt(fragments[3])
 
-      if (!isNaN(nota) && !isNaN(ch)) {
-        notas.push(nota)
-        cargasHorarias.push(ch)
+      if (!isNaN(grade) && !isNaN(hours)) {
+        grades.push(grade)
+        classHours.push(hours)
       }
     }
   }
 
   let info = []
-  for (let i = 0; i < cargasHorarias.length; i++) {
-    info[i] = [nomes[i], cargasHorarias[i], notas[i]]
+  for (let i = 0; i < classHours.length; i++) {
+    info[i] = [names[i], classHours[i], grades[i]]
   }
 
   localStorage.setItem("info", JSON.stringify(info))
@@ -59,34 +62,34 @@ function textoIduffParaArray() {
   return info
 }
 
-function localStorageParaArray() {
+function localStorageToArray() {
   const info = JSON.parse(localStorage.getItem("info")) ?? []
   return info.length ? info : null
 }
 
-function calcularCR(info) {
-  let totalHoras = 0
-  let somaPonderada = 0
+function calculateCR(info) {
+  let totalHours = 0
+  let weightedSum = 0
 
   for (let i = 0; info && i < info.length; i++) {
-    let ch = info[i][1],
-      nota = info[i][2]
-    totalHoras += ch
-    somaPonderada += nota * ch
+    let hours = info[i][1],
+      grade = info[i][2]
+    totalHours += hours
+    weightedSum += grade * hours
   }
 
-  let cr = somaPonderada / totalHoras
+  let cr = weightedSum / totalHours
 
   if (!info) cr = 0
 
-  if (isNaN(totalHoras) || isNaN(somaPonderada) || isNaN(cr)) {
+  if (isNaN(totalHours) || isNaN(weightedSum) || isNaN(cr)) {
     return
   }
 
-  document.getElementById("resultado").innerText = `Seu CR é: ${cr.toFixed(2)}.`
+  result.innerText = `Seu CR é: ${cr.toFixed(2)}.`
 }
 
-function tabelaParaArray() {
+function tableToArray() {
   const inputs = Array.from(document.querySelectorAll(".input-info"))
   const info = []
   inputs.forEach((input, i) => {
@@ -101,19 +104,18 @@ function tabelaParaArray() {
   return info.length ? info : null
 }
 
-function carregarInformacoesParaTabela() {
-  const infos = localStorageParaArray()
-  const disciplinas = document.getElementById("disciplinas")
-  disciplinas.innerHTML = ""
+function localStorageToTable() {
+  const infos = localStorageToArray()
+  subjects.innerHTML = ""
   if (!infos) {
     return
   }
   infos.forEach((info) => {
-    disciplinas.appendChild(criarLinha(...info))
+    subjects.appendChild(createLine(...info))
   })
 }
 
-function criarLinha(nome, cargaHoraria, nota) {
+function createLine(nome, cargaHoraria, nota) {
   const params = [nome, cargaHoraria, nota]
   const tr = document.createElement("tr")
   const tds = Array.from({ length: 3 }).map((_, i) => {
@@ -123,8 +125,8 @@ function criarLinha(nome, cargaHoraria, nota) {
     if (params[i]) input.value = params[i]
     td.appendChild(input)
     td.children[0].addEventListener("change", () => {
-      const info = tabelaParaArray()
-      calcularCR(info)
+      const info = tableToArray()
+      calculateCR(info)
       localStorage.setItem("info", JSON.stringify(info))
     })
     return td
@@ -143,11 +145,11 @@ function criarLinha(nome, cargaHoraria, nota) {
     const nameInput = nameCell.children[0]
     const name = nameInput.value
     if (confirm(`Deseja excluir a disciplina "${name}"?`)) {
-      const info = localStorageParaArray()
+      const info = localStorageToArray()
       const newInfo = info.filter((v) => v[0] != name)
       localStorage.setItem("info", JSON.stringify(newInfo))
-      carregarInformacoesParaTabela()
-      calcularCR(tabelaParaArray())
+      localStorageToTable()
+      calculateCR(tableToArray())
     }
   })
 
@@ -156,6 +158,6 @@ function criarLinha(nome, cargaHoraria, nota) {
   return tr
 }
 
-function adicionarLinha() {
-  document.getElementById("disciplinas").appendChild(criarLinha())
+function addLineToTable() {
+  subjects.appendChild(createLine())
 }

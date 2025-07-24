@@ -23,12 +23,12 @@
       </div>
     </div>
     <main>
-      <section aria-hidden="false" id="iduff-section" class="mode-output iduff">
+      <section aria-hidden="false" id="iduff-section" class="mode-output">
         <textarea id="iduff" rows="10" cols="50"></textarea>
-        <button onclick="calcularCR(textoIduffParaArray())">Calcular CR</button>
+        <button onclick="calculateCR(iduffTextToArray())">Calcular CR</button>
       </section>
-      <section aria-hidden="true" id="manual-section" class="mode-output manual hide">
-        <button id="adicionar-disciplina" onclick="adicionarLinha()">
+      <section aria-hidden="true" id="manual-section" class="mode-output hide">
+        <button id="add-subject" onclick="addLineToTable()">
           Adicione uma nova disciplina
         </button>
         <table>
@@ -39,10 +39,10 @@
               <th>Nota</th>
             </tr>
           </thead>
-          <tbody id="disciplinas"></tbody>
+          <tbody id="subjects"></tbody>
         </table>
       </section>
-      <p id="resultado">Seu CR é: 0.00.</p>
+      <p id="result">Seu CR é: 0.00.</p>
     </main>
   </body>
 </html>
