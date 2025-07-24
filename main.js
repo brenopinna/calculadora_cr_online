@@ -74,11 +74,11 @@ function calcularCR(info) {
 
   let cr = somaPonderada / totalHoras
 
+  if (!info) cr = 0
+
   if (isNaN(totalHoras) || isNaN(somaPonderada) || isNaN(cr)) {
     return
   }
-
-  if (!info) cr = 0
 
   document.getElementById("resultado").innerText = `Seu CR é: ${cr.toFixed(2)}.`
 }
