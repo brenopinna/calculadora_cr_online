@@ -139,11 +139,13 @@ function criarLinha(nome, cargaHoraria, nota) {
     const nameCell = row.children[0]
     const nameInput = nameCell.children[0]
     const name = nameInput.value
-    const info = localStorageParaArray()
-    const newInfo = info.filter((v) => v[0] != name)
-    localStorage.setItem("info", JSON.stringify(newInfo))
-    carregarInformacoesParaTabela()
-    calcularCR(tabelaParaArray())
+    if (confirm(`Deseja excluir a disciplina "${name}"?`)) {
+      const info = localStorageParaArray()
+      const newInfo = info.filter((v) => v[0] != name)
+      localStorage.setItem("info", JSON.stringify(newInfo))
+      carregarInformacoesParaTabela()
+      calcularCR(tabelaParaArray())
+    }
   })
 
   tr.append(...tds, deleteCell)
