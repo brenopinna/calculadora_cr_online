@@ -58,8 +58,8 @@ tr {
   position: relative;
 }
 
-tr:hover *:not(.delete, .delete-cell) {
-  background-color: rgba(0, 0, 0, 0.05);
+tr:hover *:not(.delete, .delete-cell, th) {
+  background-color: rgb(230, 230, 230);
 }
 
 .delete-cell {
@@ -69,9 +69,11 @@ tr:hover *:not(.delete, .delete-cell) {
 }
 
 .delete {
+  width: fit-content;
+  text-align: center;
   font-weight: bold;
   cursor: pointer;
-  padding: 0 10px;
+  padding: .3125rem .625rem;
   border-radius: .2rem;
   border: 1px solid black;
   background-color: red;
@@ -117,11 +119,13 @@ table {
   border-collapse: collapse;
 }
 
-#subjects input, table th {
+#subjects input {
+  min-width: 3.1rem;
   padding: 0.5rem 1rem;
 }
 
 table th,
 table td {
+  padding: .3rem .6rem;
   border: 0.0625rem solid black;/
 }
