@@ -8,12 +8,15 @@ document.querySelectorAll("[name=mode]").forEach((modeInput) => {
     const target = e.target
     if (target.id === "iduff-select") {
       iduff.classList.remove("hide")
+      iduff.ariaHidden = false
       manual.classList.add("hide")
+      manual.ariaHidden = true
     } else {
       carregarInformacoesParaTabela()
-      calcularCR(tabelaParaArray())
       iduff.classList.add("hide")
+      iduff.ariaHidden = true
       manual.classList.remove("hide")
+      manual.ariaHidden = false
     }
   })
 })
