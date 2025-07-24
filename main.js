@@ -6,21 +6,27 @@ const subjects = document.getElementById("subjects")
 
 const info = calculateCR(localStorageToArray())
 
-document.querySelectorAll("[name=mode]").forEach((modeInput) => {
+const modeInputs = document.querySelectorAll("[name=mode]")
+
+modeInputs.forEach((modeInput) => {
   modeInput.addEventListener("change", (e) => {
-    const target = e.target
-    if (target.id === "iduff-select") {
-      iduff.classList.remove("hide")
-      iduff.ariaHidden = false
-      manual.classList.add("hide")
-      manual.ariaHidden = true
-    } else {
-      localStorageToTable()
-      iduff.classList.add("hide")
-      iduff.ariaHidden = true
-      manual.classList.remove("hide")
-      manual.ariaHidden = false
-    }
+    const targetId = e.target.id.split("-")[0]
+    const otherInputs = Array.from(modeInputs).filter(
+      (input) => !input.id.includes(targetId),
+    )
+
+    otherInputs.forEach((input) => {
+      const inputId = input.id.split("-")[0]
+      const section = document.getElementById(`${inputId}-section`)
+      section.classList.add("hide")
+      section.ariaHidden = true
+    })
+
+    const target = document.getElementById(`${targetId}-section`)
+    target.classList.remove("hide")
+    target.ariaHidden = false
+
+    if (target.id.includes("manual")) localStorageToTable()
   })
 })
 
