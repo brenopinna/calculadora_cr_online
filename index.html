@@ -21,6 +21,10 @@
         <input hidden aria-hidden="true" type="radio" name="mode" id="manual-select" />
         <label for="manual-select">Inserir notas manualmente</label>
       </div>
+      <div>
+        <input hidden aria-hidden="true" type="radio" name="mode" id="schedule-select" />
+        <label for="schedule-select">Gerar horários possíveis</label>
+      </div>
     </div>
     <main>
       <section aria-hidden="false" id="iduff-section" class="mode-output">
@@ -31,7 +35,7 @@
         <button id="add-subject" onclick="addLineToTable()">
           Adicione uma nova disciplina
         </button>
-        <table>
+        <table id="cr-calc-table">
           <thead>
             <tr>
               <th>Nome da Disciplina</th>
@@ -40,6 +44,24 @@
             </tr>
           </thead>
           <tbody id="subjects"></tbody>
+        </table>
+      </section>
+      <section aria-hidden="true" id="schedule-section" class="mode-output hide">
+        <button id="add-subject" onclick="addLineToTable()">
+          Adicione uma nova disciplina
+        </button>
+        <table>
+          <thead id="schedule-generator-table">
+            <tr>
+              <th>Nome da Disciplina</th>
+              <th>Segunda-feira</th>
+              <th>Terça-feira</th>
+              <th>Quarta-feira</th>
+              <th>Quinta-feira</th>
+              <th>Sexta-feira</th>
+            </tr>
+          </thead>
+          <tbody id="schedule"></tbody>
         </table>
       </section>
       <p id="result">Seu CR é: 0.00.</p>
