@@ -110,7 +110,9 @@ tr:hover *:not(.delete, .delete-cell, th) {
   display: none;
 }
 
-#subjects input {
+table input,
+table select
+{
   outline: none;
   border: none;
   width: 100%;

@@ -47,11 +47,17 @@
         </table>
       </section>
       <section aria-hidden="true" id="schedule-section" class="mode-output hide">
-        <button id="add-schedule-subject" onclick="alert('placeholder!')">
+        <button id="add-schedule-subject" onclick="addLineToSheduleGeneratorTable()">
           Adicione uma nova disciplina
         </button>
+        <button
+          id="calculate-schedule"
+          class="calculate"
+          onclick="showScheduleResultTable(this, this.className)">
+          Gerar horários
+        </button>
         <table>
-          <thead id="schedule-generator-table">
+          <thead>
             <tr>
               <th>Nome da Disciplina</th>
               <th>Segunda-feira</th>
@@ -61,7 +67,20 @@
               <th>Sexta-feira</th>
             </tr>
           </thead>
-          <tbody id="schedule"></tbody>
+          <tbody id="schedule-generator"></tbody>
+        </table>
+        <table class="hide">
+          <thead>
+            <tr>
+              <th>Horários</th>
+              <th>Segunda-feira</th>
+              <th>Terça-feira</th>
+              <th>Quarta-feira</th>
+              <th>Quinta-feira</th>
+              <th>Sexta-feira</th>
+            </tr>
+          </thead>
+          <tbody id="schedule-result"></tbody>
         </table>
       </section>
       <p id="result">Seu CR é: 0.00.</p>

@@ -1,12 +1,24 @@
+const modeInputs = document.querySelectorAll("[name=mode]")
 const iduff = document.getElementById("iduff-section")
 const iduffTextarea = document.getElementById("iduff")
 const manual = document.getElementById("manual-section")
 const result = document.getElementById("result")
 const subjects = document.getElementById("subjects")
+const scheduleGenTableBody = document.getElementById("schedule-generator")
+const scheduleResultTableBody = document.getElementById("schedule-result")
+const addScheduleSubjectButton = document.getElementById("add-schedule-subject")
+const dayHours = [
+  "Vazio",
+  "07-09h",
+  "09-11h",
+  "11-13h",
+  "14-16h",
+  "16-18h",
+  "18-20h",
+  "20-22h",
+]
 
 const info = calculateCR(localStorageToArray())
-
-const modeInputs = document.querySelectorAll("[name=mode]")
 
 modeInputs.forEach((modeInput) => {
   modeInput.addEventListener("change", (e) => {
@@ -166,4 +178,140 @@ function createSubjectLine(nome, cargaHoraria, nota) {
 
 function addLineToSubjectsTable() {
   subjects.appendChild(createSubjectLine())
+}
+
+function createScheduleGeneratorLine() {
+  const tr = document.createElement("tr")
+  const tds = Array.from({ length: 6 }).map((_, i) => {
+    const td = document.createElement("td")
+    let input
+    if (i != 0) {
+      input = document.createElement("select")
+      for (let s of dayHours) {
+        const opt = document.createElement("option")
+        opt.value = +s.split("-")[0] || null
+        opt.innerText = s
+        input.appendChild(opt)
+      }
+      input.classList.add("select-info")
+    } else {
+      input = document.createElement("input")
+      input.classList.add("input-info")
+    }
+    td.appendChild(input)
+    return td
+  })
+
+  const deleteCell = document.createElement("td")
+  deleteCell.classList.add("delete-cell")
+  const deleteElement = document.createElement("div")
+  deleteElement.innerText = "X"
+  deleteElement.classList.add("delete")
+  deleteCell.appendChild(deleteElement)
+
+  deleteElement.addEventListener("click", (e) => {
+    const row = e.target.parentNode.parentNode
+    const nameCell = row.children[0]
+    const nameInput = nameCell.children[0]
+    const name = nameInput.value
+    if (confirm(`Deseja excluir a disciplina "${name}"?`)) {
+      let inputMatch = Array.from(
+        document.querySelectorAll("#schedule-generator .input-info"),
+      ).find((input, _) => input.value == name)
+      const rowToDelete = inputMatch.parentNode.parentNode
+      scheduleGenTableBody.removeChild(rowToDelete)
+    }
+  })
+
+  tr.append(...tds, deleteCell)
+
+  return tr
+}
+
+function addLineToSheduleGeneratorTable() {
+  scheduleGenTableBody.appendChild(createScheduleGeneratorLine())
+}
+
+function scheduleGeneratorTableToArray() {
+  const tableRows = document.querySelectorAll("#schedule-generator tr")
+  const subjectsSchedule = []
+  tableRows.forEach((tr, _) => {
+    const name = tr.children[0].children[0].value
+    const hours = []
+    for (let i = 1; i < 6; i++) {
+      hours.push(+tr.children[i].children[0].value || null)
+    }
+    subjectsSchedule.push([name, hours])
+  })
+  return subjectsSchedule
+}
+
+function createScheduleResultTableLine(subjectSchedule, lineNumber) {
+  const tr = document.createElement("tr")
+  const tds = Array.from({ length: 6 }).map((_, i) => {
+    const td = document.createElement("td")
+    const p = document.createElement("p")
+    if (i == 0) {
+      p.innerText = dayHours[lineNumber]
+    } else {
+      if (subjectSchedule[i - 1] != "") p.innerText = subjectSchedule[i - 1]
+    }
+    td.appendChild(p)
+    return td
+  })
+
+  tr.append(...tds)
+
+  return tr
+}
+
+function addLineToScheduleResultTable(subjectSchedule, lineNumber) {
+  scheduleResultTableBody.appendChild(
+    createScheduleResultTableLine(subjectSchedule, lineNumber),
+  )
+}
+
+function zipSubjects(subjectsSchedule) {
+  const finalSchedule = new Array(7).fill(0).map(() => new Array(5).fill(""))
+  subjectsSchedule.forEach((ss) => {
+    const [name, hours] = ss
+    for (let i = 0; i < 6; i++) {
+      if (!hours[i]) continue
+      let hoursIndex
+      if (hours[i]) {
+        if (hours[i] > 11) {
+          hoursIndex = parseInt((hours[i] - 8) / 2)
+        } else {
+          hoursIndex = parseInt((hours[i] - 7) / 2)
+        }
+        finalSchedule[hoursIndex][i] = name
+      }
+    }
+  })
+  return finalSchedule
+}
+
+function showScheduleResultTable(button, className) {
+  if (className == "calculate") {
+    const result = scheduleGeneratorTableToArray()
+    scheduleResultTableBody.innerHTML = ""
+    const scheduleHours = zipSubjects(result)
+    dayHours.forEach((_, lineNumber) => {
+      if (lineNumber != 0) {
+        const sh = scheduleHours[lineNumber - 1]
+        addLineToScheduleResultTable(sh, lineNumber)
+      }
+    })
+    button.innerText = "Voltar"
+    button.className = "return"
+    scheduleResultTableBody.parentNode.classList.remove("hide")
+    scheduleGenTableBody.parentNode.classList.add("hide")
+    addScheduleSubjectButton.classList.add("hide")
+  } else if (className == "return") {
+    button.innerText = "Gerar horários"
+    button.className = "calculate"
+    scheduleResultTableBody.parentNode.classList.add("hide")
+    scheduleGenTableBody.parentNode.classList.remove("hide")
+    addScheduleSubjectButton.classList.remove("hide")
+  }
 }
