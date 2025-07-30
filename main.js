@@ -26,7 +26,7 @@ modeInputs.forEach((modeInput) => {
     target.classList.remove("hide")
     target.ariaHidden = false
 
-    if (target.id.includes("manual")) localStorageToTable()
+    if (target.id.includes("manual")) localStorageToSubjectsTable()
   })
 })
 
@@ -95,8 +95,8 @@ function calculateCR(info) {
   result.innerText = `Seu CR é: ${cr.toFixed(2)}.`
 }
 
-function tableToArray() {
-  const inputs = Array.from(document.querySelectorAll(".input-info"))
+function subjectTableToArray() {
+  const inputs = Array.from(document.querySelectorAll("#subjects .input-info"))
   const info = []
   inputs.forEach((input, i) => {
     if (i % 3 == 0) {
@@ -110,18 +110,18 @@ function tableToArray() {
   return info.length ? info : null
 }
 
-function localStorageToTable() {
+function localStorageToSubjectsTable() {
   const infos = localStorageToArray()
   subjects.innerHTML = ""
   if (!infos) {
     return
   }
   infos.forEach((info) => {
-    subjects.appendChild(createLine(...info))
+    subjects.appendChild(createSubjectLine(...info))
   })
 }
 
-function createLine(nome, cargaHoraria, nota) {
+function createSubjectLine(nome, cargaHoraria, nota) {
   const params = [nome, cargaHoraria, nota]
   const tr = document.createElement("tr")
   const tds = Array.from({ length: 3 }).map((_, i) => {
@@ -131,7 +131,7 @@ function createLine(nome, cargaHoraria, nota) {
     if (params[i]) input.value = params[i]
     td.appendChild(input)
     td.children[0].addEventListener("change", () => {
-      const info = tableToArray()
+      const info = subjectTableToArray()
       calculateCR(info)
       localStorage.setItem("info", JSON.stringify(info))
     })
@@ -154,8 +154,8 @@ function createLine(nome, cargaHoraria, nota) {
       const info = localStorageToArray()
       const newInfo = info.filter((v) => v[0] != name)
       localStorage.setItem("info", JSON.stringify(newInfo))
-      localStorageToTable()
-      calculateCR(tableToArray())
+      localStorageToSubjectsTable()
+      calculateCR(subjectTableToArray())
     }
   })
 
@@ -164,6 +164,6 @@ function createLine(nome, cargaHoraria, nota) {
   return tr
 }
 
-function addLineToTable() {
-  subjects.appendChild(createLine())
+function addLineToSubjectsTable() {
+  subjects.appendChild(createSubjectLine())
 }
