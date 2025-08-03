@@ -93,6 +93,16 @@ tr:hover *:not(.delete, .delete-cell, th) {
   gap: 1rem;
 }
 
+#schedule-result-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+#schedule-result-section table {
+  width: 100%;
+}
+
 #iduff {
   resize: none;
   outline: none;
@@ -107,7 +117,7 @@ tr:hover *:not(.delete, .delete-cell, th) {
 }
 
 .hide {
-  display: none;
+  display: none !important;
 }
 
 table input,

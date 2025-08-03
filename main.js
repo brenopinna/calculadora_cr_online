@@ -5,7 +5,7 @@ const manual = document.getElementById("manual-section")
 const result = document.getElementById("result")
 const subjects = document.getElementById("subjects")
 const scheduleGenTableBody = document.getElementById("schedule-generator")
-const scheduleResultTableBody = document.getElementById("schedule-result")
+const scheduleResultSection = document.getElementById("schedule-result-section")
 const addScheduleSubjectButton = document.getElementById("add-schedule-subject")
 const dayHours = [
   "Vazio",
@@ -265,10 +265,10 @@ function createScheduleResultTableLine(subjectSchedule, lineNumber) {
   return tr
 }
 
-function addLineToScheduleResultTable(subjectSchedule, lineNumber) {
-  scheduleResultTableBody.appendChild(
-    createScheduleResultTableLine(subjectSchedule, lineNumber),
-  )
+function addLineToScheduleResultTable(scheduleTable, subjectSchedule, lineNumber) {
+  scheduleTable
+    .querySelector("tbody")
+    .appendChild(createScheduleResultTableLine(subjectSchedule, lineNumber))
 }
 
 function zipSubjects(subjectsSchedule) {
@@ -305,7 +305,7 @@ function fixedSizeScheduleCombinations(
   acumulator,
 ) {
   if (combination.length != size && scheduleArrayIndex != size) {
-    for (let i = 0; i < scheduleArray.length; i++) {
+    for (let i = scheduleArrayIndex; i < scheduleArray.length; i++) {
       const newCombination = [...combination]
       const nextSubject = scheduleArray[i]
       if (
@@ -343,24 +343,34 @@ function showScheduleResultTable(button, className) {
   if (className == "calculate") {
     const result = scheduleGeneratorTableToArray()
     const combinations = scheduleCombinations(result)
-    console.log([...combinations])
-    scheduleResultTableBody.innerHTML = ""
-    const scheduleHours = zipSubjects(result)
-    dayHours.forEach((_, lineNumber) => {
-      if (lineNumber != 0) {
-        const sh = scheduleHours[lineNumber - 1]
-        addLineToScheduleResultTable(sh, lineNumber)
-      }
+    scheduleResultSection.innerHTML = ""
+    const defaultTable = scheduleGenTableBody.parentNode.cloneNode(true)
+    const defaultTableBody = defaultTable.childNodes[3]
+    defaultTableBody.id = ""
+    defaultTableBody.innerHTML = ""
+    const defaultTableFirstColumnTitle =
+      defaultTable.childNodes[1].childNodes[1].childNodes[1]
+    defaultTableFirstColumnTitle.innerText = "Horários"
+    combinations.forEach((combination) => {
+      const newTable = defaultTable.cloneNode(true)
+      const scheduleHours = zipSubjects(combination)
+      dayHours.forEach((_, lineNumber) => {
+        if (lineNumber != 0) {
+          const sh = scheduleHours[lineNumber - 1]
+          addLineToScheduleResultTable(newTable, sh, lineNumber)
+        }
+      })
+      scheduleResultSection.appendChild(newTable)
     })
     button.innerText = "Voltar"
     button.className = "return"
-    scheduleResultTableBody.parentNode.classList.remove("hide")
     scheduleGenTableBody.parentNode.classList.add("hide")
+    scheduleResultSection.classList.remove("hide")
     addScheduleSubjectButton.classList.add("hide")
   } else if (className == "return") {
     button.innerText = "Gerar horários"
     button.className = "calculate"
-    scheduleResultTableBody.parentNode.classList.add("hide")
+    scheduleResultSection.classList.add("hide")
     scheduleGenTableBody.parentNode.classList.remove("hide")
     addScheduleSubjectButton.classList.remove("hide")
   }
