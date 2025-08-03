@@ -291,9 +291,59 @@ function zipSubjects(subjectsSchedule) {
   return finalSchedule
 }
 
+function hasConflict(combination, subject) {
+  return !!combination.find(
+    (combSubject) => JSON.stringify(combSubject[1]) === JSON.stringify(subject[1]),
+  )
+}
+
+function fixedSizeScheduleCombinations(
+  scheduleArray,
+  scheduleArrayIndex,
+  size,
+  combination,
+  acumulator,
+) {
+  if (combination.length != size && scheduleArrayIndex != size) {
+    for (let i = 0; i < scheduleArray.length; i++) {
+      const newCombination = [...combination]
+      const nextSubject = scheduleArray[i]
+      if (
+        !newCombination.includes(nextSubject) &&
+        !hasConflict(newCombination, nextSubject)
+      ) {
+        newCombination.push(nextSubject)
+        if (
+          !acumulator.find(
+            (val) => JSON.stringify(val.sort()) === JSON.stringify(newCombination.sort()),
+          )
+        ) {
+          acumulator.push(newCombination)
+        }
+      }
+      fixedSizeScheduleCombinations(
+        scheduleArray,
+        scheduleArrayIndex + 1,
+        size,
+        newCombination,
+        acumulator,
+      )
+    }
+  }
+}
+
+function scheduleCombinations(scheduleArray) {
+  const combinations = []
+  for (let size = 1; size <= scheduleArray.length; size++)
+    fixedSizeScheduleCombinations(scheduleArray, 0, size, [], combinations)
+  return combinations
+}
+
 function showScheduleResultTable(button, className) {
   if (className == "calculate") {
     const result = scheduleGeneratorTableToArray()
+    const combinations = scheduleCombinations(result)
+    console.log([...combinations])
     scheduleResultTableBody.innerHTML = ""
     const scheduleHours = zipSubjects(result)
     dayHours.forEach((_, lineNumber) => {
