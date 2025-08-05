@@ -292,9 +292,14 @@ function zipSubjects(subjectsSchedule) {
 }
 
 function hasConflict(combination, subject) {
-  return !!combination.find(
-    (combSubject) => JSON.stringify(combSubject[1]) === JSON.stringify(subject[1]),
-  )
+  return !!combination.find((combSubject) => {
+    for (let i = 0; i < combSubject[1].length; i++) {
+      if (combSubject[1][i] != null && combSubject[1][i] === subject[1][i]) {
+        return true
+      }
+    }
+    return false
+  })
 }
 
 function fixedSizeScheduleCombinations(
