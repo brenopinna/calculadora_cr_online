@@ -392,7 +392,9 @@ function showScheduleResultTable(button, className) {
       })
       scheduleResultSection.appendChild(newTable)
     })
-    const requiredHeaders = document.querySelectorAll("th:last-of-type")
+    const requiredHeaders = document.querySelectorAll(
+      "table:not(#cr-calc-table) th:last-of-type",
+    )
     requiredHeaders.forEach((th) => th.classList.add("hide"))
     button.innerText = "Voltar"
     button.className = "return"
@@ -400,7 +402,9 @@ function showScheduleResultTable(button, className) {
     scheduleResultSection.classList.remove("hide")
     addScheduleSubjectButton.classList.add("hide")
   } else if (className == "return") {
-    const requiredHeaders = document.querySelectorAll("th:last-of-type")
+    const requiredHeaders = document.querySelectorAll(
+      "table:not(#cr-calc-table) th:last-of-type",
+    )
     requiredHeaders.forEach((th) => th.classList.remove("hide"))
     button.innerText = "Gerar horários"
     button.className = "calculate"
