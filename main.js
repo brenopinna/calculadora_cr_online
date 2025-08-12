@@ -218,11 +218,13 @@ function createScheduleGeneratorLine() {
     const nameInput = nameCell.children[0]
     const name = nameInput.value
     if (confirm(`Deseja excluir a disciplina "${name}"?`)) {
-      let inputMatch = Array.from(
+      let inputMatches = Array.from(
         document.querySelectorAll("#schedule-generator .input-info"),
-      ).find((input, _) => input.value == name)
-      const rowToDelete = inputMatch.parentNode.parentNode
-      scheduleGenTableBody.removeChild(rowToDelete)
+      ).filter((input, _) => input.value == name)
+      for (let inputMatch of inputMatches) {
+        const rowToDelete = inputMatch.parentNode.parentNode
+        scheduleGenTableBody.removeChild(rowToDelete)
+      }
     }
   })
 
@@ -372,7 +374,18 @@ function scheduleCombinations(scheduleArray, requiredSubjects) {
 function showScheduleResultTable(button, className) {
   if (className == "calculate") {
     const [result, required] = scheduleGeneratorTableToArray()
-    const combinations = scheduleCombinations(result, required)
+    const filteredResult = result.filter((val) => {
+      const name = val[0]
+      const hours = val[1]
+      return !hours.every((val) => val === null) && name != ""
+    })
+    if (filteredResult.length == 0) {
+      alert(
+        "Preencha ao menos uma disciplina com o nome e ao menos um horário de aula para prosseguir.",
+      )
+      return
+    }
+    const combinations = scheduleCombinations(filteredResult, required)
     scheduleResultSection.innerHTML = ""
     const defaultTable = scheduleGenTableBody.parentNode.cloneNode(true)
     const defaultTableBody = defaultTable.childNodes[3]
