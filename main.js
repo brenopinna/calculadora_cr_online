@@ -182,10 +182,13 @@ function addLineToSubjectsTable() {
 
 function createScheduleGeneratorLine() {
   const tr = document.createElement("tr")
-  const tds = Array.from({ length: 6 }).map((_, i) => {
+  const tds = Array.from({ length: 7 }).map((_, i) => {
     const td = document.createElement("td")
     let input
-    if (i != 0) {
+    if (i == 6) {
+      input = document.createElement("input")
+      input.type = "checkbox"
+    } else if (i != 0) {
       input = document.createElement("select")
       for (let s of dayHours) {
         const opt = document.createElement("option")
@@ -235,15 +238,18 @@ function addLineToSheduleGeneratorTable() {
 function scheduleGeneratorTableToArray() {
   const tableRows = document.querySelectorAll("#schedule-generator tr")
   const subjectsSchedule = []
+  const requiredSubjects = []
   tableRows.forEach((tr, _) => {
     const name = tr.children[0].children[0].value
     const hours = []
     for (let i = 1; i < 6; i++) {
       hours.push(+tr.children[i].children[0].value || null)
     }
+    const required = tr.children[6].children[0].checked
+    if (required) requiredSubjects.push(name)
     subjectsSchedule.push([name, hours])
   })
-  return subjectsSchedule
+  return [subjectsSchedule, requiredSubjects]
 }
 
 function createScheduleResultTableLine(subjectSchedule, lineNumber) {
@@ -302,8 +308,18 @@ function hasConflict(combination, subject) {
   })
 }
 
+function combinationIncludesAllRequiredSubjects(combination, requiredSubjects) {
+  const combinationNames = combination.reduce((acc, subject) => {
+    return [...acc, subject[0]]
+  }, [])
+  return requiredSubjects
+    .map((req) => combinationNames.includes(req))
+    .every((v) => v != false)
+}
+
 function fixedSizeScheduleCombinations(
   scheduleArray,
+  requiredSubjects,
   scheduleArrayIndex,
   size,
   combination,
@@ -321,13 +337,15 @@ function fixedSizeScheduleCombinations(
         if (
           !acumulator.find(
             (val) => JSON.stringify(val.sort()) === JSON.stringify(newCombination.sort()),
-          )
+          ) &&
+          combinationIncludesAllRequiredSubjects(newCombination, requiredSubjects)
         ) {
           acumulator.push(newCombination)
         }
       }
       fixedSizeScheduleCombinations(
         scheduleArray,
+        requiredSubjects,
         scheduleArrayIndex + 1,
         size,
         newCombination,
@@ -337,17 +355,24 @@ function fixedSizeScheduleCombinations(
   }
 }
 
-function scheduleCombinations(scheduleArray) {
+function scheduleCombinations(scheduleArray, requiredSubjects) {
   const combinations = []
   for (let size = 1; size <= scheduleArray.length; size++)
-    fixedSizeScheduleCombinations(scheduleArray, 0, size, [], combinations)
+    fixedSizeScheduleCombinations(
+      scheduleArray,
+      requiredSubjects,
+      0,
+      size,
+      [],
+      combinations,
+    )
   return combinations
 }
 
 function showScheduleResultTable(button, className) {
   if (className == "calculate") {
-    const result = scheduleGeneratorTableToArray()
-    const combinations = scheduleCombinations(result)
+    const [result, required] = scheduleGeneratorTableToArray()
+    const combinations = scheduleCombinations(result, required)
     scheduleResultSection.innerHTML = ""
     const defaultTable = scheduleGenTableBody.parentNode.cloneNode(true)
     const defaultTableBody = defaultTable.childNodes[3]
@@ -367,12 +392,16 @@ function showScheduleResultTable(button, className) {
       })
       scheduleResultSection.appendChild(newTable)
     })
+    const requiredHeaders = document.querySelectorAll("th:last-of-type")
+    requiredHeaders.forEach((th) => th.classList.add("hide"))
     button.innerText = "Voltar"
     button.className = "return"
     scheduleGenTableBody.parentNode.classList.add("hide")
     scheduleResultSection.classList.remove("hide")
     addScheduleSubjectButton.classList.add("hide")
   } else if (className == "return") {
+    const requiredHeaders = document.querySelectorAll("th:last-of-type")
+    requiredHeaders.forEach((th) => th.classList.remove("hide"))
     button.innerText = "Gerar horários"
     button.className = "calculate"
     scheduleResultSection.classList.add("hide")
